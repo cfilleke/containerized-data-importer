@@ -26,6 +26,16 @@ RUN 	dnf -y install dnf-plugins-core && \
 	java-11-openjdk-devel \
 	&& dnf clean all
 
+RUN if test "${ARCH}" = amd64; then \
+      dnf install -y --setopt=install_weak_deps=False  --installroot /usr/s390x-linux-gnu/sys-root --forcearch s390x --releasever 9 \
+          glibc-devel \
+          glibc-static && \
+      dnf install -y epel-release && \
+      dnf install -y --setopt=install_weak_deps=False \
+          gcc-s390x-linux-gnu && \
+      dnf clean -y all; \
+    fi
+
 RUN pip3 install --upgrade j2cli operator-courier==2.1.11 && \
 	curl -sL https://services.gradle.org/distributions/gradle-6.6-bin.zip -o gradle-6.6-bin.zip && \
 	mkdir /opt/gradle && \
